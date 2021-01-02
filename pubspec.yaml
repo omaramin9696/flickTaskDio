@@ -30,6 +30,9 @@ dependencies:
   cupertino_icons: ^1.0.0
   http: ^0.12.2
   shared_preferences: ^0.5.6
+  lazy_load_scrollview: 1.2.0
+
+
   provider:
   test:
 

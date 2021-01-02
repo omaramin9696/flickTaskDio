@@ -7,27 +7,36 @@ import 'custom_search_delgates.dart';
 import 'networkPresenter.dart';
 
 class flickpresenter with ChangeNotifier{
-FlickrData _flickrData=new FlickrData();
-List<String> url = [];
 
- void doSearch(String searchText) async {
-   String searchResult = await network().getData(searchText);
-   _flickrData = FlickrData.fromJson(jsonDecode(searchResult));
-   generarteURLs();
-   notifyListeners();
+  FlickrData _flickrData=new FlickrData();
+  List<String> url = [];
+  String searchText;
+
+ void doSearch() async
+ {
+   String searchResult;
+   if(searchText!=null)
+   {
+      searchResult = await network().getData(searchText,url.isNotEmpty?_flickrData.photos.perpage+=10:10);
+      _flickrData = FlickrData.fromJson(jsonDecode(searchResult));
+      generarteURLs();
+   }
+    notifyListeners();
  }
 
 
-  void generarteURLs() {
-   url.clear();
-   for (Photo photo in _flickrData.photos.photo) {
+  void generarteURLs()
+  {
+   this.url.clear();
+   for (Photo photo in _flickrData.photos.photo)
+   {
       url.add(
           "https://farm${photo.farm}.static.flickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg");
-    }
+   }
   }
 
   Future<void> showSearch1(BuildContext context) async {
-    final searchText = await showSearch<String>(
+   searchText = await showSearch<String>(
       context: context,
       delegate: SearchWithSuggestionDelegate(
         onSearchChanged: getRecentSearchesLike,
@@ -40,7 +49,9 @@ List<String> url = [];
         searchText.trim().length > 0) //no need to save white spaces
     {
       await saveToRecentSearches(searchText.trim());
-      doSearch(searchText);
+      this.url.clear();
+      _flickrData=new FlickrData();
+      doSearch();
     }
   notifyListeners();
   }

@@ -2,15 +2,19 @@ import 'package:apibymetest/presenter/flickPresenter.dart';
 import 'package:apibymetest/presenter/networkPresenter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (BuildContext context) => flickpresenter(),),
-      ChangeNotifierProvider(create: (BuildContext context) => network(),),
-
+      ChangeNotifierProvider(
+        create: (BuildContext context) => flickpresenter(),
+      ),
+      ChangeNotifierProvider(
+        create: (BuildContext context) => network(),
+      ),
     ],
     child: MaterialApp(
       home: api(),
@@ -35,32 +39,36 @@ class api extends StatelessWidget {
                   title: ListTile(
                     trailing: Icon(Icons.search),
                     onTap: () async {
-                      await Provider.of<flickpresenter>(context,listen: false).showSearch1(context);
+                      await Provider.of<flickpresenter>(context, listen: false)
+                          .showSearch1(context);
                     },
                   ),
                 )),
           ),
           Container(
-            height: MediaQuery.of(context).size.height-200,
-            child: GridView.count(
-              crossAxisCount: 2,
-              children: [
-                for(var x in Provider.of<flickpresenter>(context).url)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Image.network(x),
+            height: MediaQuery.of(context).size.height - 200,
+            child:
+            LazyLoadScrollView(
+              onEndOfPage:() {
+               return Provider.of<flickpresenter>(context,listen: false).doSearch();
+              },
+              child: GridView.count(
+                crossAxisCount: 2,
+                children: [
+                  for(String link in Provider.of<flickpresenter>(context).url)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Image.network(link),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-
-              //  itemCount: _flickPresenter.url.length,
-              //  itemBuilder: (context, index) {},
+                ],
+              ),
             ),
           ),
         ],
