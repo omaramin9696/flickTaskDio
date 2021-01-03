@@ -49,7 +49,8 @@ class api extends StatelessWidget {
             height: MediaQuery.of(context).size.height - 200,
             child:
             LazyLoadScrollView(
-              onEndOfPage:() {
+              onEndOfPage:()
+              {
                return Provider.of<flickpresenter>(context,listen: false).doSearch();
               },
               child: GridView.count(
