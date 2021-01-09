@@ -102,4 +102,5 @@ class Photo {
     data['isfamily'] = this.isfamily;
     return data;
   }
+
 }

@@ -1,6 +1,9 @@
+
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:typed_data';
 
 class network with ChangeNotifier{
   Future<String> getData(String textSearch,int perpage) async {
@@ -11,4 +14,26 @@ class network with ChangeNotifier{
     );
     return response.body;
   }
+  Future<List<Uint8List>> getImageBytes(List url)async{
+    http.Response response;
+    List<Uint8List>returnedList=[];
+    for(int i=0;i<url.length;i++)
+    {
+      response = await http.get(Uri.encodeFull(url[i]));
+      returnedList.add(response.bodyBytes);
+    }
+    return returnedList;
+  }
+  Future<bool>getConnectionState()async{
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+
+  }
+
 }
