@@ -34,6 +34,8 @@ dependencies:
   sqflite:
   path:
   connectivity: ^2.0.2
+  dio: ^3.0.10
+  dio_http_cache: ^0.2.11
 
 
   provider:
