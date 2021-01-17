@@ -52,7 +52,6 @@ class api extends StatelessWidget {
             height: MediaQuery.of(context).size.height - 200,
             child: LazyLoadScrollView(
               onEndOfPage: () {
-                print('test');
                 return Provider.of<flickpresenter>(context, listen: false)
                     .doSearch();
               },
@@ -67,7 +66,7 @@ class api extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
-                            child: Image.network(link),
+                            child:  Image.network(link),
                           ),
                         ),
                       ),

@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:apibymetest/model/flickModel.dart';
+import 'package:apibymetest/presenter/dataBasePresenter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,16 +13,29 @@ class flickpresenter with ChangeNotifier {
   FlickrData _flickrData = new FlickrData();
   network _network =new network();
   List<String> url = [];
+  List<Uint8List> urlBinary = [];
   String searchText;
+
+
   void doSearch() async {
     Map searchResult;
     if (searchText != null)
     {
-      searchResult = await _network.getData(
-          searchText, url.isNotEmpty ? _flickrData.photos.perpage += 10 : 10);
-      _flickrData = FlickrData.fromJson(searchResult);
-      generarteURLs();
-   await saveToRecentSearches(searchText.trim());
+      db db1 = new db(searchText.replaceAll(' ', ''));
+
+      if(await _network.getConnectionState())
+      {
+        searchResult = await _network.getData(searchText,
+            _flickrData.photos != null ? _flickrData.photos.perpage += 10 : 10);
+        _flickrData = FlickrData.fromJson(searchResult);
+        generarteURLs();
+        await db1.insertDB(await _network.getImageBytes(this.url));
+      }
+      else
+        {
+          this.url.clear();
+          this.urlBinary=await db1.retriveDB();
+        }
     }
     notifyListeners();
   }
